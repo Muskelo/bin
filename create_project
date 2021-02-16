@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#Создание проект
+
+
+usage () {
+    echo "$PROGNAME: usage: $PROGNAME [-n name][-t type][-g git]"
+}
+create_python_project () {
+    [[ -d $name ]] && \
+    { echo "Папка с именем проекта ужэ существует"; return 1;}
+    hash git 2>/dev/null || \
+    { echo >&2 "Не ненайден git"; return 1; }
+    hash virtualenv 2>/dev/null || \
+    { echo >&2 "Не ненайден virtualenv"; return 1; }
+
+    mkdir $name
+    git clone "${git}" "${name}/."
+    virtualenv "${name}/venv"
+    touch "${name}/.gitignore"
+    echo '/venv/' >> "${name}/.gitignore"
+}
+#константы
+PROGNAME=$(basename $0)
+#переменные
+name=
+git=
+type='python'
+
+echo "Создание проекта"
+
+#обработка аргументов
+while [[ -n $1 ]]; do
+    case $1 in
+    -n) name=$2
+        shift
+        ;;
+    -t) type=$2
+        shift
+        ;;
+    -g) git=$2
+        shift
+        ;;
+    -h) usage
+        exit
+        ;;
+    *) usage
+        exit 1
+        ;;
+    esac
+    shift
+done
+
+#валидация
+
+[[ "$name" =~ ^[[:alpha:]][[:alnum:]_]+$ ]] ||\
+{ echo "Не подходящие имя $name";exit 1; }
+
+#Контроль
+
+if [[ "$type" =~ python ]];then
+    create_python_project && echo "Проект успешно создан"
+else
+    echo "Данный тип проекта неизвестен"
+fi
+
+
