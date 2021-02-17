@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#auto sync to google drive
+AUTOSYNC_PATH="/home/muskelo/.myconfig;.myconfig:/home/muskelo/.myinstructions;.myinstructions"
+
+# do for one folder
+while [ -n "$AUTOSYNC_PATH" ];do
+    # choose folder
+    current_fold=${AUTOSYNC_PATH##*:}
+    AUTOSYNC_PATH=${AUTOSYNC_PATH%:$current_fold}
+    if [ "$AUTOSYNC_PATH" = "$current_fold" ]; then
+        AUTOSYNC_PATH=""
+    fi
+    
+    # sync
+    rclone copy "${current_fold%;*}" "gd:rc/${current_fold#*;}" "-L"
+
+done
