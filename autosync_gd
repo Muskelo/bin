@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #auto sync to google drive
-AUTOSYNC_PATH="/home/muskelo/.myconfig;.myconfig:/home/muskelo/.myinstructions;.myinstructions"
+AUTOSYNC_PATH="/home/muskelo/.myconfig;.myconfig:/home/muskelo/.myinstructions;.myinstructions:/home/muskelo/Documents;.Documents:/home/muskelo/books;.books"
 
 # do for one folder
 while [ -n "$AUTOSYNC_PATH" ];do
@@ -13,6 +13,6 @@ while [ -n "$AUTOSYNC_PATH" ];do
     fi
     
     # sync
-    rclone copy "${current_fold%;*}" "gd:rc/${current_fold#*;}" "-L"
+    rclone sync "${current_fold%;*}" "gd:rc/${current_fold#*;}" "-L" 
 
 done
