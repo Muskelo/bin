@@ -7,24 +7,32 @@ usage () {
     echo "$PROGNAME: usage: $PROGNAME [-n name][-t type][-g git]"
 }
 create_python_project () {
+    # проверки
     [[ -d $name ]] && \
     { echo "Папка с именем проекта ужэ существует"; return 1;}
     hash git 2>/dev/null || \
     { echo >&2 "Не ненайден git"; return 1; }
     hash virtualenv 2>/dev/null || \
     { echo >&2 "Не ненайден virtualenv"; return 1; }
+    if [ -z "$WORKON_HOME" ];then echo >&2 'Не установлена $WORKON_HOME';fi
+    
+    # virtualenvwrapper
+    source /usr/bin/virtualenvwrapper.sh
 
+    # creating
     mkdir $name
-    git clone "${git}" "${name}/."
-    virtualenv "${name}/venv"
-    touch "${name}/.gitignore"
-    echo '/venv/' >> "${name}/.gitignore"
+    mkvirtualenv "${name}" || \
+    { echo >&2 "Не ненайден mkvirtualenv"; return 1; } 
+    if [ -n "$git" ];then
+        echo '234234'
+        git clone "${git}" "${name}/."
+    fi
 }
 #константы
 PROGNAME=$(basename $0)
 #переменные
-name=
-git=
+name=''
+git=''
 type='python'
 
 echo "Создание проекта"
