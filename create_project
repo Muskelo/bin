@@ -7,6 +7,7 @@ usage () {
     echo "$PROGNAME: usage: $PROGNAME [-n name][-t type][-g git]"
 }
 create_python_project () {
+    # check requirements
     [[ -d $name ]] && \
     { echo "Папка с именем проекта ужэ существует"; return 1;}
     hash git 2>/dev/null || \
@@ -15,13 +16,14 @@ create_python_project () {
     { echo >&2 "Не ненайден virtualenv"; return 1; }
 
     mkdir $name
-    virtualenv "${name}/venv"
-    touch "${name}/.gitignore"
-    echo '/venv/' >> "${name}/.gitignore"
 
+    virtualenv "${name}/venv"
     if [ -n "$git" ];then
         git clone "${git}" "${name}/."
     fi
+
+    touch "${name}/.gitignore"
+    echo '/venv/' >> "${name}/.gitignore"
 }
 #константы
 PROGNAME=$(basename $0)
