@@ -16,12 +16,12 @@ create_python_project () {
     { echo >&2 "Не ненайден virtualenv"; return 1; }
 
     mkdir $name
-
-    virtualenv "${name}/venv"
     if [ -n "$git" ];then
         git clone "${git}" "${name}/."
     fi
 
+
+    virtualenv "${name}/venv"
     touch "${name}/.gitignore"
     echo '/venv/' >> "${name}/.gitignore"
 }
