@@ -2,39 +2,45 @@
 
 #Создание проект
 
-
+# FUNCTIONS ---------->
 usage () {
     echo "$PROGNAME: usage: $PROGNAME [-n name][-t type][-g git]"
 }
 create_python_project () {
     # check requirements
     [[ -d $name ]] && \
-    { echo "Папка с именем проекта ужэ существует"; return 1;}
+    { echo "Папка с именем проекта уже существует"; return 1;}
+
     hash git 2>/dev/null || \
     { echo >&2 "Не ненайден git"; return 1; }
+    
     hash virtualenv 2>/dev/null || \
     { echo >&2 "Не ненайден virtualenv"; return 1; }
 
+    # create project
     mkdir $name
+
     if [ -n "$git" ];then
         git clone "${git}" "${name}/."
+        touch "${name}/.gitignore"
+        echo '/venv/' >> "${name}/.gitignore"
     fi
 
-
     virtualenv "${name}/venv"
-    touch "${name}/.gitignore"
-    echo '/venv/' >> "${name}/.gitignore"
 }
-#константы
+
+# SCRIPT ---------->
+
+# constant
 PROGNAME=$(basename $0)
-#переменные
+# variables
 name=
 git=
 type='python'
 
 echo "Создание проекта"
 
-#обработка аргументов
+# argument handling
 while [[ -n $1 ]]; do
     case $1 in
     -n) name=$2
@@ -49,19 +55,19 @@ while [[ -n $1 ]]; do
     -h) usage
         exit
         ;;
-    *) usage
+    *)  usage
         exit 1
         ;;
     esac
     shift
 done
 
-#валидация
+# validation
 
 [[ "$name" =~ ^[[:alpha:]][[:alnum:]_]+$ ]] ||\
 { echo "Не подходящие имя $name";exit 1; }
 
-#Контроль
+# control
 
 if [[ "$type" =~ python ]];then
     create_python_project && echo "Проект успешно создан"
